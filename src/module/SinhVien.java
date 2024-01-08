@@ -14,7 +14,6 @@ public class SinhVien {
     }
 
     public SinhVien(int maSinhVien, String tenSinhVien, Tinh queQuan, Date ngaySinh, boolean gioiTinh, float diemMon1, float diemMon2, float diemMon3) {
-        super();
         this.maSinhVien = maSinhVien;
         this.tenSinhVien = tenSinhVien;
         this.queQuan = queQuan;

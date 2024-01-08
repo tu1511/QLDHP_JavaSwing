@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.BorderLayout;
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -8,36 +9,56 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import module.QLSVModel;
+import module.SinhVien;
+import module.Tinh;
+
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import java.awt.Font;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.swing.Action;
 import javax.swing.Box;
+import javax.swing.ButtonGroup;
 import javax.swing.border.BevelBorder;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+import javax.swing.JRadioButton;
 import javax.swing.JComboBox;
 import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
+
+import controller.QLSVController;
+
 import javax.swing.JRadioButton;
 import java.awt.Color;
 
 public class QLSVView extends JFrame {
 
 	private JPanel contentPane;
-	QLSVModel model;
-	private JTextField textField_MaSV;
-	private JTable table;
-	private JTextField textField_idSV;
-	private JTextField textField_HoVaTen;
-	private JTextField textField_NgaySinh;
-	private JTextField textField_Mon1;
-	private JTextField textField_Mon2;
-	private JTextField textField_2;
+	public QLSVModel model;
+	public JTextField textField_MaSV_TimKiem;
+	public JTable table;
+	public JTextField textField_idSV;
+	public JTextField textField_HoVaTen;
+	public JTextField textField_NgaySinh;
+	public JTextField textField_Mon1;
+	public JTextField textField_Mon2;
+	public JTextField textField_Mon3;
+	public ButtonGroup btn_gioiTinh;
+	public JComboBox comboBox_QueQuan;
+	public JRadioButton radioBTN_nu;
+	public JRadioButton radioBTN_nam;
+	public JComboBox comboBox_QueQuan_timKiem;
 	/**
 	 * Launch the application.
 	 */
@@ -61,6 +82,8 @@ public class QLSVView extends JFrame {
 		this.model = new QLSVModel();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 782, 664);
+		
+		Action action = new QLSVController(this);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -96,30 +119,31 @@ public class QLSVView extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel label_QueQuan = new JLabel("Quê quán");
-		label_QueQuan.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		label_QueQuan.setBounds(34, 11, 95, 42);
-		contentPane.add(label_QueQuan);
+		JLabel label_QueQuan_TimKiem = new JLabel("Quê quán");
+		label_QueQuan_TimKiem.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		label_QueQuan_TimKiem.setBounds(34, 11, 95, 42);
+		contentPane.add(label_QueQuan_TimKiem);
 		
 		JLabel label_MaSV = new JLabel("Mã sinh viên");
 		label_MaSV.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		label_MaSV.setBounds(369, 11, 108, 42);
+		label_MaSV.setBounds(318, 11, 108, 42);
 		contentPane.add(label_MaSV);
 		
-		textField_MaSV = new JTextField();
-		textField_MaSV.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		textField_MaSV.setColumns(10);
-		textField_MaSV.setBounds(487, 18, 164, 28);
-		contentPane.add(textField_MaSV);
+		textField_MaSV_TimKiem = new JTextField();
+		textField_MaSV_TimKiem.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		textField_MaSV_TimKiem.setColumns(10);
+		textField_MaSV_TimKiem.setBounds(436, 18, 108, 28);
+		contentPane.add(textField_MaSV_TimKiem);
 		
 		JButton btn_Tim = new JButton("Tìm");
+		btn_Tim.addActionListener(action);
 		btn_Tim.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		btn_Tim.setBounds(676, 17, 69, 31);
+		btn_Tim.setBounds(565, 17, 69, 31);
 		contentPane.add(btn_Tim);
 		
-		JComboBox comboBox_QueQuan = new JComboBox();
-		comboBox_QueQuan.setBounds(139, 21, 195, 28);
-		contentPane.add(comboBox_QueQuan);
+		comboBox_QueQuan_timKiem = new JComboBox();
+		comboBox_QueQuan_timKiem.setBounds(129, 21, 154, 28);
+		contentPane.add(comboBox_QueQuan_timKiem);
 		
 		JSeparator separator_1 = new JSeparator();
 		separator_1.setForeground(new Color(0, 0, 0));
@@ -135,13 +159,9 @@ public class QLSVView extends JFrame {
 		table.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		table.setModel(new DefaultTableModel(
 			new Object[][] {
-				{null, null, null, null, null, null, null},
-				{null, null, null, null, null, null, null},
-				{null, null, null, null, null, null, null},
-				{null, null, null, null, null, null, null},
 			},
 			new String[] {
-				"STT", "M\u00E3 sinh vi\u00EAn", "H\u1ECD t\u00EAn", "Qu\u00EA qu\u00E1n", "\u0110i\u1EC3m 1", "\u0110i\u1EC3m 2", "\u0110i\u1EC3m 3"
+				"M\u00E3 sinh vi\u00EAn", "H\u1ECD t\u00EAn", "Qu\u00EA qu\u00E1n", "Ng\u00E0y sinh", "Gi\u1EDBi t\u00EDnh", "\u0110i\u1EC3m 1", "\u0110i\u1EC3m 2", "\u0110i\u1EC3m 3"
 			}
 		));
 		
@@ -182,6 +202,12 @@ public class QLSVView extends JFrame {
 		contentPane.add(textField_HoVaTen);
 		
 		JLabel label_Que_Quan = new JLabel("Quê quán");
+		ArrayList<Tinh> listTinh = Tinh.getDSTinh();
+		comboBox_QueQuan_timKiem.addItem("");
+		for (Tinh tinh : listTinh) {
+			comboBox_QueQuan_timKiem.addItem(tinh.getTenTinh());
+		}
+		
 		label_Que_Quan.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		label_Que_Quan.setBounds(10, 450, 108, 28);
 		contentPane.add(label_Que_Quan);
@@ -197,24 +223,33 @@ public class QLSVView extends JFrame {
 		label_NgaySinh.setBounds(10, 491, 108, 28);
 		contentPane.add(label_NgaySinh);
 		
-		JComboBox comboBox_QueQuan_1 = new JComboBox();
-		comboBox_QueQuan_1.setBounds(129, 452, 164, 28);
-		contentPane.add(comboBox_QueQuan_1);
+		comboBox_QueQuan = new JComboBox();
+		comboBox_QueQuan.addItem("");
+		for (Tinh tinh : listTinh) {
+			comboBox_QueQuan.addItem(tinh.getTenTinh());
+		}
+		
+		comboBox_QueQuan.setBounds(129, 452, 164, 28);
+		contentPane.add(comboBox_QueQuan);
 		
 		JLabel label_GioiTinh = new JLabel("Giới tính");
 		label_GioiTinh.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		label_GioiTinh.setBounds(350, 373, 75, 28);
 		contentPane.add(label_GioiTinh);
 		
-		JRadioButton radioBTN_nam = new JRadioButton("Nam");
+		radioBTN_nam = new JRadioButton("Nam");
 		radioBTN_nam.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		radioBTN_nam.setBounds(429, 373, 61, 28);
 		contentPane.add(radioBTN_nam);
 		
-		JRadioButton radioBTN_nu = new JRadioButton("Nữ");
+		radioBTN_nu = new JRadioButton("Nữ");
 		radioBTN_nu.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		radioBTN_nu.setBounds(496, 373, 61, 28);
 		contentPane.add(radioBTN_nu);
+		
+		btn_gioiTinh = new ButtonGroup();
+		btn_gioiTinh.add(radioBTN_nam);
+		btn_gioiTinh.add(radioBTN_nu);
 		
 		JLabel label_Mon1 = new JLabel("Môn 1");
 		label_Mon1.setFont(new Font("Tahoma", Font.PLAIN, 18));
@@ -243,33 +278,38 @@ public class QLSVView extends JFrame {
 		label_Mon3.setBounds(350, 491, 108, 28);
 		contentPane.add(label_Mon3);
 		
-		textField_2 = new JTextField();
-		textField_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		textField_2.setColumns(10);
-		textField_2.setBounds(469, 493, 164, 28);
-		contentPane.add(textField_2);
+		textField_Mon3 = new JTextField();
+		textField_Mon3.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		textField_Mon3.setColumns(10);
+		textField_Mon3.setBounds(469, 493, 164, 28);
+		contentPane.add(textField_Mon3);
 		
 		JButton btn_Them = new JButton("Thêm");
+		btn_Them.addActionListener(action);
 		btn_Them.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		btn_Them.setBounds(34, 543, 95, 42);
 		contentPane.add(btn_Them);
 		
 		JButton btn_Xoa = new JButton("Xóa");
+		btn_Xoa.addActionListener(action);
 		btn_Xoa.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		btn_Xoa.setBounds(170, 543, 95, 42);
 		contentPane.add(btn_Xoa);
 		
 		JButton btn_CapNhat = new JButton("Cập nhật");
+		btn_CapNhat.addActionListener(action);
 		btn_CapNhat.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		btn_CapNhat.setBounds(318, 543, 124, 42);
 		contentPane.add(btn_CapNhat);
 		
 		JButton btn_Luu = new JButton("Lưu");
+		btn_Luu.addActionListener(action);
 		btn_Luu.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		btn_Luu.setBounds(490, 543, 95, 42);
 		contentPane.add(btn_Luu);
 		
 		JButton btn_HuyBo = new JButton("Hủy bỏ");
+		btn_HuyBo.addActionListener(action);
 		btn_HuyBo.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		btn_HuyBo.setBounds(625, 543, 95, 42);
 		contentPane.add(btn_HuyBo);
@@ -279,6 +319,177 @@ public class QLSVView extends JFrame {
 		separator_1_2.setBounds(10, 530, 746, 2);
 		contentPane.add(separator_1_2);
 		
+		JButton btn_HuyTim = new JButton("Hủy tìm");
+		btn_HuyTim.addActionListener(action);
+		btn_HuyTim.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		btn_HuyTim.setBounds(644, 17, 95, 31);
+		contentPane.add(btn_HuyTim);
+		
 		this.setVisible(true);
+	}
+
+	public void xoaFrom() {
+		textField_idSV.setText("");
+		textField_HoVaTen.setText("");
+		textField_MaSV_TimKiem.setText("");
+		textField_NgaySinh.setText("");
+		textField_Mon1.setText("");
+		textField_Mon2.setText("");
+		textField_Mon3.setText("");
+		comboBox_QueQuan.setSelectedIndex(-1);
+		btn_gioiTinh.clearSelection();
+	}
+
+	public void themSinhVienHoacCapNhat(SinhVien sv) {
+		DefaultTableModel model_table = (DefaultTableModel) table.getModel();
+		if (!this.model.kiemTraTonTai(sv)) {
+			this.model.insert(sv);
+			
+			model_table.addRow(
+					new Object[]{
+							sv.getMaSinhVien()+"", 
+							sv.getTenSinhVien(),
+							sv.getQueQuan().getTenTinh(),
+							sv.getNgaySinh().getDate()+"/"+(sv.getNgaySinh().getMonth()+1)+"/"+(sv.getNgaySinh().getYear()+1900),
+							(sv.isGioiTinh()?"Nam":"Nữ"),
+							sv.getDiemMon1()+"",
+							sv.getDiemMon2()+"",
+							sv.getDiemMon3()+""
+							});
+		} else {
+			this.model.update(sv);
+			int soLuongDong = model_table.getRowCount();
+			for (int i = 0; i < soLuongDong; i++) {
+				String id = model_table.getValueAt(i, 0)+"";
+				if(id.equals(sv.getMaSinhVien()+"")) {
+					model_table.setValueAt(sv.getMaSinhVien()+"",i , 0);
+					model_table.setValueAt(sv.getTenSinhVien()+"",i , 1);
+					model_table.setValueAt(sv.getQueQuan().getTenTinh()+"",i , 2);
+					model_table.setValueAt(sv.getNgaySinh().getDate()+"/"+(sv.getNgaySinh().getMonth()+1)+"/"+(sv.getNgaySinh().getYear()+1900)+"",i , 3);
+					model_table.setValueAt((sv.isGioiTinh()?"Nam":"Nữ")+"",i , 4);
+					model_table.setValueAt(sv.getDiemMon1()+"",i , 5);
+					model_table.setValueAt(sv.getDiemMon2()+"",i , 6);
+					model_table.setValueAt(sv.getDiemMon3()+"",i , 7);
+				}
+			}
+		}
+	}
+	public SinhVien getSinhVienDangChon() {
+		DefaultTableModel model_table = (DefaultTableModel) table.getModel();
+		int i_row = table.getSelectedRow();
+		
+		int maSinhVien = Integer.valueOf(model_table.getValueAt(i_row, 0)+"");
+		String tenSinhVien = model_table.getValueAt(i_row, 1)+"";
+		Tinh tinh = Tinh.getTinhByName(model_table.getValueAt(i_row, 2)+"");
+		String s_ngaySinh = model_table.getValueAt(i_row, 3)+"";
+		Date ngaySinh = new Date(s_ngaySinh);
+		String textGioiTinh = model_table.getValueAt(i_row, 4)+"";
+		boolean gioiTinh = textGioiTinh.equals("Nam");
+		
+		float diemMon1 = Float.valueOf(model_table.getValueAt(i_row, 5)+"");
+		float diemMon2 = Float.valueOf(model_table.getValueAt(i_row, 6)+"");
+		float diemMon3 = Float.valueOf(model_table.getValueAt(i_row, 7)+"");
+		
+		SinhVien sv = new SinhVien(maSinhVien, tenSinhVien, tinh, ngaySinh, gioiTinh, diemMon1, diemMon2, diemMon3);
+		return sv;
+	}
+	public void hienThiTTSV() {
+		SinhVien sv = getSinhVienDangChon();
+		this.textField_idSV.setText(sv.getMaSinhVien()+"");
+		this.textField_HoVaTen.setText(sv.getTenSinhVien()+"");
+		this.comboBox_QueQuan.setSelectedItem(sv.getQueQuan().getTenTinh());
+		String s_ngaySinh = sv.getNgaySinh().getDate()+"/"+(sv.getNgaySinh().getMonth()+1)+"/"+(sv.getNgaySinh().getYear()+1900);
+		this.textField_NgaySinh.setText(s_ngaySinh+"");
+		if(sv.isGioiTinh()) {
+			radioBTN_nam.setSelected(true);
+		} else {
+			radioBTN_nu.setSelected(true);
+		}
+//		this.btn_gioiTinh.setSelected(null, gioiTinh);
+		this.textField_Mon1.setText(sv.getDiemMon1()+"");
+		this.textField_Mon2.setText(sv.getDiemMon2()+"");
+		this.textField_Mon3.setText(sv.getDiemMon3()+"");
+	}
+
+	public void thucHienXoa() {
+		DefaultTableModel model_table = (DefaultTableModel) table.getModel();
+		int i_row = table.getSelectedRow();
+		int luaChon = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn xóa dòng đã chọn!");
+		if(luaChon == JOptionPane.YES_OPTION) {
+			SinhVien sv = getSinhVienDangChon();
+			this.model.delete(sv);
+			model_table.removeRow(i_row);
+		}
+	}
+
+	public void thucHienThemSinhVien() {
+//		get du lieu
+		int maSinhVien = Integer.valueOf(this.textField_idSV.getText());
+		String tenSinhVien = this.textField_HoVaTen.getText();
+		int queQuan = this.comboBox_QueQuan.getSelectedIndex()-1;
+		Tinh tinh = Tinh.getTinhById(queQuan);
+		Date ngaySinh = new Date(this.textField_NgaySinh.getText());
+		Boolean gioiTinh = true;
+		if (this.radioBTN_nam.isSelected()) {
+			gioiTinh = true;
+		}
+		else if (this.radioBTN_nu.isSelected()) {
+			gioiTinh = false;
+		}
+		float diemMon1 = Float.valueOf(this.textField_Mon1.getText());
+		float diemMon2 = Float.valueOf(this.textField_Mon2.getText());
+		float diemMon3 = Float.valueOf(this.textField_Mon3.getText());
+		
+//		tao bang sinh vien moi
+		SinhVien sv = new SinhVien(maSinhVien, tenSinhVien, tinh, ngaySinh, gioiTinh, diemMon1, diemMon2, diemMon3);
+		
+		this.themSinhVienHoacCapNhat(sv);
+		
+	}
+
+	public void thucHienTim() {
+		int queQuan = this.comboBox_QueQuan_timKiem.getSelectedIndex()-1;
+		String maSinhVienTimKiem = this.textField_MaSV_TimKiem.getText();
+		DefaultTableModel model_table = (DefaultTableModel) table.getModel();
+		
+		int soLuongDong = model_table.getRowCount();
+		Set<Integer> idSinhVienCanXoa = new TreeSet<Integer>();
+		if (queQuan > 0) {
+			Tinh tinhDaChon = Tinh.getTinhById(queQuan);
+			for (int i = 0; i < soLuongDong; i++) {
+				String id = model_table.getValueAt(i, 0)+"";
+				String tenTinh = model_table.getValueAt(i, 2)+"";
+				if(!tenTinh.equals(tinhDaChon)) {
+					idSinhVienCanXoa.add(Integer.valueOf(id));
+				}
+			}
+		}
+		if (maSinhVienTimKiem.length() > 0) {
+			for (int i = 0; i < soLuongDong; i++) {
+				String id = model_table.getValueAt(i, 0)+"";
+				if(!id.equals(maSinhVienTimKiem)) {
+					idSinhVienCanXoa.add(Integer.valueOf(id));
+				}
+			}
+		}
+		for (Integer idCanXoa : idSinhVienCanXoa) {
+			soLuongDong = model_table.getRowCount();
+			for (int i = 0; i < soLuongDong; i++) {
+				String idTrongTable = model_table.getValueAt(i, 0)+"";
+				if(idTrongTable.equals(idCanXoa.toString())) {
+					try {
+						model_table.removeRow(i);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	public void thucHienHuyTim() {
+		// TODO Auto-generated method stub
+		
 	}
 }
