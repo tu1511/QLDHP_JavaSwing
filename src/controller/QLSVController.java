@@ -43,7 +43,15 @@ public class QLSVController implements Action{
 		}else if (cm.equals("Tìm")) {
 			this.view.thucHienTim();
 		}else if (cm.equals("Hủy tìm")) {
-			this.view.thucHienHuyTim();
+			this.view.thucHienTaiLaiDuLieu();
+		}else if (cm.equals("About me")) {
+			this.view.hienThiAbout();
+		}else if (cm.equals("Exit")) {
+			this.view.thoatKhoiChuongTrinh();
+		}else if (cm.equals("Save")) {
+			this.view.thucHienSaveFile();
+		}else if (cm.equals("Open")) {
+			this.view.thucHienOpenFile();
 		}
 	}
 
@@ -84,3 +92,4 @@ public class QLSVController implements Action{
 	}
 
 }
+
