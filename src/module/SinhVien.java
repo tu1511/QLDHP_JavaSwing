@@ -1,7 +1,10 @@
 package module;
+
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
-public class SinhVien {
+
+public class SinhVien implements Serializable{
     private int maSinhVien;
     private String tenSinhVien;
     private Tinh queQuan;
@@ -10,7 +13,6 @@ public class SinhVien {
     private float diemMon1, diemMon2, diemMon3;
 
     public SinhVien() {
-        super();
     }
 
     public SinhVien(int maSinhVien, String tenSinhVien, Tinh queQuan, Date ngaySinh, boolean gioiTinh, float diemMon1, float diemMon2, float diemMon3) {

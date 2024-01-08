@@ -18,6 +18,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import java.awt.Font;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Set;
@@ -32,6 +37,8 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JRadioButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+
 import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
@@ -93,25 +100,31 @@ public class QLSVView extends JFrame {
 		menuBar.add(menuFile);
 		
 		JMenuItem menuOpen = new JMenuItem("Open");
+		menuOpen.addActionListener(action);
 		menuOpen.setFont(new Font("Segoe UI", Font.PLAIN, 18));
 		menuFile.add(menuOpen);
 		
-		JMenuItem menuClose = new JMenuItem("Close");
-		menuClose.setFont(new Font("Segoe UI", Font.PLAIN, 18));
-		menuFile.add(menuClose);
+		JMenuItem menuSave = new JMenuItem("Save");
+		menuSave.addActionListener(action);
+		menuSave.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+		menuFile.add(menuSave);
 		
 		JSeparator separator = new JSeparator();
 		menuFile.add(separator);
 		
 		JMenuItem menuExit = new JMenuItem("Exit");
+		menuExit.addActionListener(action);
 		menuExit.setFont(new Font("Segoe UI", Font.PLAIN, 18));
 		menuFile.add(menuExit);
 		
 		JMenu menuAbout = new JMenu("About");
+//		them su kien khi nhan vao btn
+		menuAbout.addActionListener(action);
 		menuAbout.setFont(new Font("Segoe UI", Font.PLAIN, 18));
 		menuBar.add(menuAbout);
 		
 		JMenuItem menuAboutMe = new JMenuItem("About me");
+		menuAboutMe.addActionListener(action);
 		menuAboutMe.setFont(new Font("Segoe UI", Font.PLAIN, 18));
 		menuAbout.add(menuAboutMe);
 		contentPane = new JPanel();
@@ -164,6 +177,8 @@ public class QLSVView extends JFrame {
 				"M\u00E3 sinh vi\u00EAn", "H\u1ECD t\u00EAn", "Qu\u00EA qu\u00E1n", "Ng\u00E0y sinh", "Gi\u1EDBi t\u00EDnh", "\u0110i\u1EC3m 1", "\u0110i\u1EC3m 2", "\u0110i\u1EC3m 3"
 			}
 		));
+		
+		table.setRowHeight(25);
 		
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.setBounds(10, 119, 746, 196);
@@ -340,22 +355,26 @@ public class QLSVView extends JFrame {
 		btn_gioiTinh.clearSelection();
 	}
 
+	public void themSinhVienVaoTable(SinhVien sv) {
+		DefaultTableModel model_table = (DefaultTableModel) table.getModel();
+		model_table.addRow(
+				new Object[]{
+						sv.getMaSinhVien()+"", 
+						sv.getTenSinhVien(),
+						sv.getQueQuan().getTenTinh(),
+						sv.getNgaySinh().getDate()+"/"+(sv.getNgaySinh().getMonth()+1)+"/"+(sv.getNgaySinh().getYear()+1900),
+						(sv.isGioiTinh()?"Nam":"Nữ"),
+						sv.getDiemMon1()+"",
+						sv.getDiemMon2()+"",
+						sv.getDiemMon3()+""
+						});
+	}
+	
 	public void themSinhVienHoacCapNhat(SinhVien sv) {
 		DefaultTableModel model_table = (DefaultTableModel) table.getModel();
 		if (!this.model.kiemTraTonTai(sv)) {
 			this.model.insert(sv);
-			
-			model_table.addRow(
-					new Object[]{
-							sv.getMaSinhVien()+"", 
-							sv.getTenSinhVien(),
-							sv.getQueQuan().getTenTinh(),
-							sv.getNgaySinh().getDate()+"/"+(sv.getNgaySinh().getMonth()+1)+"/"+(sv.getNgaySinh().getYear()+1900),
-							(sv.isGioiTinh()?"Nam":"Nữ"),
-							sv.getDiemMon1()+"",
-							sv.getDiemMon2()+"",
-							sv.getDiemMon3()+""
-							});
+			this.themSinhVienVaoTable(sv);
 		} else {
 			this.model.update(sv);
 			int soLuongDong = model_table.getRowCount();
@@ -411,15 +430,56 @@ public class QLSVView extends JFrame {
 		this.textField_Mon3.setText(sv.getDiemMon3()+"");
 	}
 
+//	public void thucHienXoa() {
+//		DefaultTableModel model_table = (DefaultTableModel) table.getModel();
+//		int i_row = table.getSelectedRow();
+//		int luaChon = JOptionPane.showConfirmDialog(
+//				this, 
+//				"Bạn có chắc chắn xóa dòng đã chọn?", 
+//				"Xóa sinh viên", 
+//				JOptionPane.YES_NO_OPTION);
+//		if(luaChon == JOptionPane.YES_OPTION) {
+//			SinhVien sv = getSinhVienDangChon();
+//			this.model.delete(sv);
+//			model_table.removeRow(i_row);
+//		}
+//	}
 	public void thucHienXoa() {
-		DefaultTableModel model_table = (DefaultTableModel) table.getModel();
-		int i_row = table.getSelectedRow();
-		int luaChon = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn xóa dòng đã chọn!");
-		if(luaChon == JOptionPane.YES_OPTION) {
-			SinhVien sv = getSinhVienDangChon();
-			this.model.delete(sv);
-			model_table.removeRow(i_row);
-		}
+	    DefaultTableModel model_table = (DefaultTableModel) table.getModel();
+	    int i_row = table.getSelectedRow();
+
+	    int luaChon = JOptionPane.showConfirmDialog(
+	            this,
+	            "Bạn có chắc chắn xóa dòng đã chọn?",
+	            "Xóa sinh viên",
+	            JOptionPane.YES_NO_OPTION);
+
+	    if (luaChon == JOptionPane.YES_OPTION) {
+	        SinhVien sv = getSinhVienDangChon();
+	        
+	        // Xóa sinh viên khỏi danh sách
+	        this.model.delete(sv);
+	        
+	        // Cập nhật dữ liệu trong file sau khi xóa
+	        capNhatDuLieuFile();
+	        
+	        // Xóa dòng trong bảng
+	        model_table.removeRow(i_row);
+	    }
+	}
+	
+	// Phương thức cập nhật dữ liệu trong file
+	private void capNhatDuLieuFile() {
+	    if (this.model.getTenFile().length() > 0) {
+	        saveFile(this.model.getTenFile());
+	    } else {
+	        JFileChooser fc = new JFileChooser();
+	        int returnVal = fc.showSaveDialog(this);
+	        if (returnVal == JFileChooser.APPROVE_OPTION) {
+	            File file = fc.getSelectedFile();
+	            saveFile(file.getAbsolutePath());
+	        }
+	    }
 	}
 
 	public void thucHienThemSinhVien() {
@@ -448,22 +508,27 @@ public class QLSVView extends JFrame {
 	}
 
 	public void thucHienTim() {
+		
+//		goi ham huy tim kiem truoc
+		this.thucHienTaiLaiDuLieu();
+//		Thuc hien tim kiem theo tinh
 		int queQuan = this.comboBox_QueQuan_timKiem.getSelectedIndex()-1;
 		String maSinhVienTimKiem = this.textField_MaSV_TimKiem.getText();
 		DefaultTableModel model_table = (DefaultTableModel) table.getModel();
 		
 		int soLuongDong = model_table.getRowCount();
 		Set<Integer> idSinhVienCanXoa = new TreeSet<Integer>();
-		if (queQuan > 0) {
+		if (queQuan >= 0) {
 			Tinh tinhDaChon = Tinh.getTinhById(queQuan);
 			for (int i = 0; i < soLuongDong; i++) {
 				String id = model_table.getValueAt(i, 0)+"";
 				String tenTinh = model_table.getValueAt(i, 2)+"";
-				if(!tenTinh.equals(tinhDaChon)) {
+				if(!tenTinh.equals(tinhDaChon.getTenTinh())) {
 					idSinhVienCanXoa.add(Integer.valueOf(id));
 				}
 			}
 		}
+//		thuc hien tim kiem theo ma sinh vien
 		if (maSinhVienTimKiem.length() > 0) {
 			for (int i = 0; i < soLuongDong; i++) {
 				String id = model_table.getValueAt(i, 0)+"";
@@ -487,9 +552,92 @@ public class QLSVView extends JFrame {
 			}
 		}
 	}
+	
+	public void thucHienTaiLaiDuLieu() {
+		while(true) {
+			DefaultTableModel model_table = (DefaultTableModel) table.getModel();
+			int soLuongDong = model_table.getRowCount();
+			if (soLuongDong == 0)
+				break;
+			else
+				try {
+					model_table.removeRow(0);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+		}
+		for (SinhVien sv : this.model.getDsSinhVien()) {
+			this.themSinhVienVaoTable(sv);
+		}
+	}
 
-	public void thucHienHuyTim() {
-		// TODO Auto-generated method stub
-		
+	public void hienThiAbout() {
+//		show message
+		JOptionPane.showMessageDialog(this, "Phần mềm quản lý sinh viên 1.0!");
+	}
+
+	public void thoatKhoiChuongTrinh() {
+		int luaChon = JOptionPane.showConfirmDialog(
+				this, 
+				"Thoát khỏi chương trình?",//nội dung confirm
+				"Exit",//tiêu đề của confirm
+				JOptionPane.YES_NO_OPTION);
+		if(luaChon == JOptionPane.YES_OPTION) {
+			System.exit(0);
+		}
+	}
+
+	public void saveFile(String path) {
+		try {
+			this.model.setTenFile(path);
+			FileOutputStream fos = new FileOutputStream(path);
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			for (SinhVien sv : this.model.getDsSinhVien()) {
+				oos.writeObject(sv);
+			}
+			oos.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void thucHienSaveFile() {
+		if(this.model.getTenFile().length() > 0) {
+			saveFile(this.model.getTenFile());
+		}else {
+			JFileChooser fc = new JFileChooser();
+			int returnVal = fc.showSaveDialog(this);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
+				saveFile(file.getAbsolutePath());
+			}
+		}
+	}
+
+	public void openFile(File file) {
+		ArrayList<SinhVien> ds = new ArrayList<SinhVien>();
+		try {
+			this.model.setTenFile(file.getAbsolutePath());
+			FileInputStream fis = new FileInputStream(file);
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			SinhVien sv = null;
+			while((sv = (SinhVien)ois.readObject()) != null) {
+				ds.add(sv);
+			}
+			ois.close();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		this.model.setDsSinhVien(ds);
+	}
+	
+	public void thucHienOpenFile() {
+		JFileChooser fc = new JFileChooser();
+		int returnVal = fc.showOpenDialog(this);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			openFile(file);
+			thucHienTaiLaiDuLieu();
+		}
 	}
 }

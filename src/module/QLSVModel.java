@@ -5,11 +5,12 @@ import java.util.ArrayList;
 public class QLSVModel {
     private ArrayList<SinhVien> dsSinhVien;
     private String luaChon;
-    
+    private String tenFile;
 
     public QLSVModel() {
         this.dsSinhVien = new ArrayList<>();
         this.luaChon = "";
+        this.tenFile = "";
     }
 
     public QLSVModel(ArrayList<SinhVien> dsSinhVien) {
@@ -23,8 +24,16 @@ public class QLSVModel {
     public void setDsSinhVienSinh(ArrayList<SinhVien> dsSinhVien) {
         this.dsSinhVien = dsSinhVien;
     }
+    
+    public String getTenFile() {
+		return tenFile;
+	}
 
-    public void insert(SinhVien sinhVien) {
+	public void setTenFile(String tenFile) {
+		this.tenFile = tenFile;
+	}
+
+	public void insert(SinhVien sinhVien) {
         this.dsSinhVien.add(sinhVien);
     }
 

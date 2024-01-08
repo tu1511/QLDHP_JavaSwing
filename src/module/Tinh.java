@@ -1,9 +1,10 @@
 package module;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Tinh {
+public class Tinh implements Serializable{
 	private int maTinh;
 	private String tenTinh;
 	
